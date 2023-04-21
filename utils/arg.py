@@ -48,11 +48,18 @@ def parse_args_to_dict(dict_in):
 if __name__ == '__main__':
 
 	dict_in = {
-		'x':int,
+		'x':int,#5,
 		'y':2.,
-		'hi':'hello'
+		'hi':str,#'hello'
 	}
+
 	print('dict_in:',dict_in)
+
 	dict_out = parse_args_to_dict(dict_in)
+
 	print('dict_out',dict_out)
+
 	print(dict_out['hi'],'Product:', dict_out['x'] * dict_out['y'])
+
+
+	#EOF
