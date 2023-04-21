@@ -1,39 +1,40 @@
 import argparse
 
-def ad(d0):
+def parse_args_to_dict(dict_in):
 
-	d1 = {}
+	dict_out = {}
 
 	parser = argparse.ArgumentParser()
 
-	for k in d0:
+	for k in dict_in:
+
 		if len(k) == 1:
 			dash = '-'
 		else:
 			dash = '--'
 
-		if type(d0[k])is type:
+		if type(dict_in[k])is type:
 			parser.add_argument(
 				dash+k,
-				type=d0[k],
+				type=dict_in[k],
 				required=True,
 			)
 		else:
 			parser.add_argument(
 				dash+k,
 				nargs='?',
-				type=type(d0[k]),
+				type=type(dict_in[k]),
 				required=False,
-				default=d0[k],
+				default=dict_in[k],
 			)
 
 	args = parser.parse_args()
 
 	for k in vars(args):
-		d1[k] = vars(args)[k]
+		dict_out[k] = vars(args)[k]
 
-	for k in d0:
-		if k not in d1 or d1[k] is None:
+	for k in dict_in:
+		if k not in dict_out or dict_out[k] is None:
 			print(
 				'***',
 				k,
@@ -41,16 +42,17 @@ def ad(d0):
 			)
 			assert(False)
 
-	return d1
+	return dict_out
+
 
 if __name__ == '__main__':
 
-	d0 = {
-		'x':5,#int,
+	dict_in = {
+		'x':int,
 		'y':2.,
 		'hi':'hello'
 	}
-
-	d1 = ad(d0)
-
-	print(d1['hi'],'Product:', d1['x'] * d1['y'])
+	print('dict_in:',dict_in)
+	dict_out = parse_args_to_dict(dict_in)
+	print('dict_out',dict_out)
+	print(dict_out['hi'],'Product:', dict_out['x'] * dict_out['y'])
