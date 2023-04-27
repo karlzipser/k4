@@ -1,6 +1,6 @@
 #os.environ['GLOG_minloglevel'] = '2'
 
-from k4.utils.arg import *
+from k4.utils.core import *
 
 command_line_args = {
     'paths':'Desktop',
@@ -11,6 +11,7 @@ command_line_args = {
     'padsize':5,
     'rcratio':1.1,#1.618,
 }
+
 
 def process_args( command_line_args):
     gd = parse_args_to_dict( command_line_args )
@@ -73,6 +74,17 @@ def get_list_of_img_data( gd ):
 
 
 
+
+
+def _mi( gd ):
+    if 'fig' not in gd:
+        gd['fig'] = figure('fig',facecolor="0.0")
+    mi(gd['bkg_image'],'fig')
+    gd['fig'].tight_layout(pad=0)
+    #spause()
+
+
+
 def make_bkg_image( gd ):
     gd['cols'] = int(gd['rcratio']*sqrt(len(gd['list_of_img_data'])))
     padsize = gd['padsize']
@@ -102,9 +114,113 @@ def make_bkg_image( gd ):
             I['square_embeding']
 
     gd['bkg_image'] = bkg
-    #_mi()  
-    mi( gd['bkg_image'] )
-    input()
+    _mi( gd )  
+    #mi( gd['bkg_image'] )
+    #input()
+
+
+
+def handle_events(event):
+
+    time.sleep(0.1) # needed to allow main tread time to run
+    print('handle_events')
+    if False:
+        if gd['Bload_Arguements']:
+            lst_bkp = gd['imgs']
+            if Bload('reader',Dst=gd,starttime=gd['starttime']):
+                if len(gd['imgs']) == 0:
+                    gd['imgs'] = lst_bkp
+                gd['list_of_img_data'] = []
+
+        _show()
+
+    x, y, k = event.xdata, event.ydata, event.key
+    print(x,y,k)
+    if k == 'q':
+        cv2.destroyAllWindows()
+        CA()
+        sys.exit()
+
+    if x is None:
+        return
+
+    padsize = gd['padsize']
+
+    if 'list_of_img_data' in gd:
+        for I in gd['list_of_img_data']:
+            if y >= I['corner_y']+padsize:
+                if y <= I['corner_y']+padsize+gd['extent']:
+                    if x >= I['corner_x']+padsize:
+                        if x <= I['corner_x']+padsize+gd['extent']:
+                            s = I['file'].replace(opjh(),'')
+                            if True:#gd['last_print'] != s or gd['last_k'] != k:
+                                #gd['last_print'] = s
+                                #gd['last_k'] = k
+                                if True:#k == ' ':
+                                    clp('\n'+qtd(s),'`---')
+                                    if False:
+                                        try:
+                                            print(key_counter.get_key_str(gd['Keys'][I['file']]))
+                                        except:
+                                            pass
+                                img = resize_to_extent(
+                                        gd['Img_buffer'][I['file']],
+                                        gd['extent2'],
+                                    )
+                                q = zeros((image_info_area_height,shape(img)[1],3),np.uint8)
+                                imgq = np.concatenate((img,q),axis=0) 
+                                fontsize = 0.4
+                                cv2.putText(
+                                    imgq,
+                                    pname(s)+'/',
+                                    (10,shape(imgq)[0]-30),
+                                    cv2.FONT_HERSHEY_SIMPLEX,
+                                    fontsize,
+                                    (150,150,150),
+                                    1,
+                                    cv2.LINE_AA
+                                )
+                                cv2.putText(
+                                    imgq,
+                                    fname(s),
+                                    (10,shape(imgq)[0]-10),
+                                    cv2.FONT_HERSHEY_SIMPLEX,
+                                    fontsize,#.3,
+                                    (150,150,150),
+                                    1,
+                                    cv2.LINE_AA
+                                )                                
+                                mi(#mci(
+                                    imgq,
+                                    title='mci'
+                                )
+                                if False:#k is not None and k != ' ':
+                                    gd['lst'].append({
+                                            'writer':__file__,
+                                            'file':I['file'],
+                                            'key':k,
+                                            'time':time.time(),
+                                            'events':{
+                                                'xdata':event.xdata,
+                                                'ydata':event.ydata,
+                                                'x':event.x,
+                                                'y':event.y,
+                                                'key':event.key,
+                                            },
+                                    })
+                                    if False:
+                                        Bsave(
+                                            gd['lst'],
+                                            'show'
+                                        )
+                                        
+                                        if I['file'] not in gd['Keys']:
+                                            gd['Keys'][I['file']] = {}
+                                        key_counter.account_for_key(gd['Keys'][I['file']],k)
+                                        clp('\n'+"'"+k+"'",':',qtd(fname(s)),'`--rb')
+                                        print(key_counter.get_key_str(gd['Keys'][I['file']]))
+                                        Bsave(gd['Keys'],'show_keys')
+                                return
 
 
 
@@ -112,5 +228,10 @@ if __name__ == '__main__':
     gd = process_args( command_line_args )
     get_list_of_img_data( gd )
     make_bkg_image( gd )
+    cid0 = gd['fig'].canvas.mpl_connect('key_press_event', handle_events)
+    cid1 = gd['fig'].canvas.mpl_connect('button_press_event', handle_events)
+    cid2 = gd['fig'].canvas.mpl_connect('motion_notify_event', handle_events)
+    plt.pause(10**9)
+    raw_input()
 
 #EOF

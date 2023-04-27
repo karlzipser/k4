@@ -2,10 +2,11 @@ import os
 import glob
 import re
 from pathlib import Path
+import time
 gg = glob.glob
 
 import numpy as np
-
+from k4.utils.core.paths import *
 rnd = np.random.random
 rndint = np.random.randint
 rndn = np.random.randn
@@ -26,7 +27,7 @@ sin = np.sin
 cos = np.cos
 std = np.std
 pi = np.pi
-
+#from k4.utils import *
 
 def natural_keys(text):
     '''
@@ -139,7 +140,7 @@ def mi(
 
         from matrix:
 
-            from k3.vis import *
+            from k4.vis import *
             mi(np.random.rand(256,256),99,[1,1,1],'random matrix')
 
         from path:
