@@ -7,7 +7,6 @@ try:
     import cv2
     imread = cv2.imread
     imsave = cv2.imwrite
-    input('here')
 except:
     if True:
         cr("*** Couldn't import cv2 ***")
