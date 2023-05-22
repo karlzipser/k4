@@ -1,6 +1,6 @@
 
 from k4.utils import *
-from k4.drafts.karguments.get_Arguments2 import get_Arguments2
+from k4.utils.karguments.get_Arguments2 import get_Arguments2
 
 
 def main():
