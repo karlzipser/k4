@@ -1,6 +1,7 @@
 
 from k4.utils import *
 from k4.utils.core.arrays import *
+import html
 
 if interactive():
   __file__ = opjk('misc/msg_reader/format.py')
@@ -35,6 +36,8 @@ def filtered_to_html(
 
     messages_js_str, raw_txts = messages_to_js_map_str( Person, Messages, A )
 
+
+    #kprint(messages_js_str)
 
     head_html = [
         "<head>",
@@ -167,7 +170,7 @@ def filtered_to_html(
         html_str = html_str.replace(first_d,new_first)
 
 
-    html_str += get_sidebar(Dates,Chat_identifiers,from_name,to_name,A['dst'])
+    html_str += get_sidebar(Messages,Dates,Chat_identifiers,from_name,to_name,A['dst'])
 
     
 
@@ -219,6 +222,8 @@ def messages_to_js_map_str(
     loop_range = rlen(date_sorted)    
 
     raw_txts = []
+
+    #loop_range = range(2000)
 
     for j in loop_range:
 
@@ -356,6 +361,9 @@ def messages_to_js_map_str(
 
         if M[rowid]['message.text']:
             txt = M[rowid]['message.text']
+            #txt = html.escape(txt)
+            txt = txt.replace('\\','')
+
             raw_txts.append(txt)
             txt = txt.split(' ')
             
@@ -385,6 +393,8 @@ def messages_to_js_map_str(
 
     messages_js_str = '\n'.join(js)
 
+    #messages_js_str = html.escape(messages_js_str)
+
     return '<script>\n'+messages_js_str+'\n</script>', raw_txts
 
 
@@ -398,7 +408,7 @@ def messages_to_js_map_str(
 
 
 
-def get_sidebar(Dates,Chat_identifiers,from_name,to_name,dst):
+def get_sidebar(Messages,Dates,Chat_identifiers,from_name,to_name,dst):
     
     safe_chat_identifiers = []
     for c in Chat_identifiers:
@@ -418,7 +428,7 @@ def get_sidebar(Dates,Chat_identifiers,from_name,to_name,dst):
 <a id="toggleText_link" href="#" onclick=\""""+chat_id_on_str+"""toggleText(0);return false;"> Off</a>
 
 <div id="toggleDiv_links">
-xxx
+
 </div>"""
 
 
@@ -437,6 +447,7 @@ xxx
 """
     total_count = 0
     total_word_count = 0
+    kprint(Dates)
     for d in Dates:
         c = Dates[d]['count']
         w = Dates[d]['word_count']
@@ -446,7 +457,10 @@ xxx
         h += d2n("<a href=",qtd('#'+get_safe_name(first)),">",d,' (')+f'{c:,}'+") "+f'{w:,}'+"</a><br>\n"
 
     h += '<br>'
-    h += d2n("<a>Totals:<br>",f'{total_count:,}',' texts<br>',f'{total_word_count:,}',' words</a><br>\n<br>\n')
+    #h += d2n("<a>Totals:<br>",f'{total_count:,}',' texts<br>',f'{total_word_count:,}',' words</a><br>\n<br>\n')
+    h += d2n("<a>Totals:<br>&ensp;",len(Messages),' texts<br>')#,total_word_count,' words</a><br>\n<br>\n')
+
+    cb(d2n("<a>Totals:<br>",len(Messages),' texts<br>',total_word_count,' words</a><br>\n<br>\n'))
 
     h += '<div id="people_links">YYY</div>'
 

@@ -11,7 +11,7 @@ def get_People(Address_book,conn):
 
     chat_row_id = cur.fetchall()
 
-    print(chat_row_id)
+    #kprint(chat_row_id)
 
     Chats = {}
 
@@ -70,30 +70,40 @@ def get_People(Address_book,conn):
 
 
 def select_person(People,inp=''):
+    """
     if not inp:
         s = input('Enter name or name part: ')
     else:
         s = inp
+    """
+    s = inp
     l = []
     #spacer = ''
     #if k[1]:
     #    spacer = ' '
     for k in People:
-        cm(k,r=0,a=0)
+        #cm(k,r=0,a=1)
         #if s.lower() in (k[0]+spacer+k[1]).lower():
         #    l.append(k)
         _first,_last = k[0].lower(),k[1].lower()
 
         slo = s.lower()
-        cm(_first,_last,slo,a=0)
-        if not _last and slo in _first[:min(len(slo),len(_first))]:
-            cg(s,a=0)
+
+        if False:
+            cm(_first,_last,slo,a=0)
+            if not _last and slo in _first:#_first[:min(len(slo),len(_first))]:
+                cg(s,a=1)
+                l.append(k)
+            elif _last and ' ' in slo and slo in d2s(_first,_last)[:min(len(slo),1+len(_first)+len(_last))]:
+                cy(s,a=1)
+                l.append(k)
+            else:
+                cr(s,a=0)
+                pass#cr(s)
+
+        if slo in _first+' '+_last:
             l.append(k)
-        elif _last and ' ' in slo and slo in d2s(_first,_last)[:min(len(slo),1+len(_first)+len(_last))]:
-            cy(s,a=0)
-            l.append(k)
-        else:
-            pass#cr(s)
+
     pl = []
     for a in l:
         pl.append(a[0] + ' ' + a[1])

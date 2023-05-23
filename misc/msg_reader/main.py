@@ -3,13 +3,12 @@ from k4.utils import *
 import sqlite3
 from k4.misc.msg_reader.format import filtered_to_html, select_people_for_sidebar
 import k4.misc.msg_reader.R2dic as R2dic
-from k4.misc.msg_reader.get_messages import \
-    get_People, select_person_messages
+from k4.misc.msg_reader.get_messages import get_People, select_person_messages
 from address_book.Address_book import Address_book
 
 Arguments = get_Arguments2(
     {
-        'name' : 'Kelly',
+        'name' : 'nobody',
         'number' : 0,
         'my_first_name' : 'Karl',
         'start_date' : "1/1/2000",
@@ -43,6 +42,8 @@ os_system('mkdir -p',opj( Arguments['dst'], 'counts'  ) )
 
 
 if not Arguments['batch']:
+    if not Arguments['name']:
+        Arguments['name'] = input('Enter name or name part: ')
     Arguments['name'] = str(Arguments['name'])
     if Arguments['name']:
         assert not Arguments['number']
@@ -50,21 +51,6 @@ if not Arguments['batch']:
         assert not Arguments['name']
         Arguments['name'] = str(Arguments['number'])
     assert len(Arguments['name'])
-
-#assert ((not Arguments['archive_only']) and (not Arguments['current_db_only'])) \
-#    or (Arguments['archive_only'] or Arguments['archive_only'])
-"""
-exec(
-    d2s(
-        'from',
-        Arguments['Address_book'].replace(
-            opjh(),'').replace(
-            '.py','').replace(
-            '/','.'),'import Address_book')
-    )
-"""
-
-
 
 
 heics = find(opjh('Library/Messages/Attachments'),'*.heic')
@@ -83,11 +69,6 @@ def main(name):
     conn = sqlite3.connect(opjh('Library/Messages/chat-11-5-2021.db'))
 
     cur = conn.cursor()
-
-    
-
-
-    #sql = get_sql(Arguments['chat_db'])['sql']
 
     if 'Agument Address_book':
         cur.execute("select rowid,chat_identifier from chat")
@@ -174,16 +155,19 @@ def main(name):
             else:
                 Messages[k] = Messages_R[k]
     
+    cy(len(Messages),'texts',r=0)
+
+    if not len(Messages):
+        #cy('no texts')
+        return
+
     html_str, raw_txts = filtered_to_html(
         Person,
         Messages,
         Arguments,
     )
     
-
-
-
-    #cm(raw_txts,r=1)
+    #cm(raw_txts,r=0,a=0)
     
     text_to_file(
         opj(
@@ -228,8 +212,6 @@ def main(name):
 
 def batch():
 
-    
-
     ks = kys(Address_book)
 
     people = []
@@ -240,7 +222,7 @@ def batch():
 
     people = sorted(list(set(people)))
 
-    kprint(people,title='Address_book people',r=0)
+    #kprint(people,title='Address_book people',r=0)
 
     for p in people:
         try:
