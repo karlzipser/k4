@@ -284,7 +284,7 @@ for epoch in range(400):  # loop over the dataset multiple times
             images.append(z55(inputs[0,:].cpu().numpy().transpose(1,2,0)))
             images.append(z55(inputs0[0,:].cpu().numpy().transpose(1,2,0)))
             #cm(0,r=1)
-            mi(get_image_row(images),'layers')
+            mi(get_image_row(images,blank_width=2),'layers')
             #mi(np.concatenate(images,axis=1),'images')
             spause()
 
