@@ -1,5 +1,5 @@
 
-from k4.utils.core import *
+from utilz import *
 
 command_line_args = {
     'paths':'Desktop',
