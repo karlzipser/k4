@@ -123,28 +123,30 @@ class SqueezeNet(nn.Module):
 
     def forward(self,x,print_shape=False,use_deconv=False):
         #use_deconv=True
-        x = self.k3(x)
 
-        x = self.a(x)
+        r = 0
+        cm('x',x.size(),r=r)
+
+        x = self.k3(x); cm('k3 Upsample',x.size(),r=r)
+
+        x = self.a(x); cm('a Conv2d',x.size(),r=r)
         
-        x = self.b(x)
+        x = self.b(x); cm('b ReLU',x.size(),r=r)
         
-        x = self.c(x)
+        x = self.c(x); cm('c MaxPool2d',x.size(),r=r)
         
-        x = self.d(x)
+        x = self.d(x); cm('d Fire',x.size(),r=r)
         
-        x = self.e(x)
+        x = self.e(x); cm('e Fire',x.size(),r=r)
 
         if use_deconv:
             x = self.b(self.m(x))
             x = self.n(x)
             x = self.k(x)
         else:
-            x = self.k(x)
-            x = self.l(x)
+            x = self.k(x); cm('k',x.size(),r=r)
+            x = self.l(x); cm('l',x.size(),r=1)
             
-            
-
         return x
 
 
@@ -191,7 +193,7 @@ def from_1024_to_32x32(t):
 net = Net()
 net.to(device)
 
-N = 200
+
 print_shape = True
 save_timer = Timer(300)
 show_timer = Timer(7)
@@ -202,12 +204,14 @@ criterion = nn.MSELoss()
 #optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.1)
 optimizer = optim.Adam(net.parameters(), lr=0.001)
 first_time = False
-loss_list = []
-running_loss = 0.0
+
 ctr = 0
 
 scale_factor = 1/2.
 
+N = 200
+loss_list = []
+running_loss = 0.0
 for epoch in range(400):  # loop over the dataset multiple times
 
     for i, data in enumerate(trainloader, 0):
